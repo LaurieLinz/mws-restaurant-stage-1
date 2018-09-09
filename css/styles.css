@@ -164,6 +164,22 @@ nav h1 a {
   max-width: 100%;
   min-width: 100%;
 }
+
+#maincontent .favorite-icon {
+  top: 20px
+}
+
+#restaurants-list li .favorite-icon button, #maincontent .favorite-icon button {
+  max-width: 25px;
+  max-height: 25px;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  border: none;
+  float: right;
+  padding-right: 3em;
+}
+
 #restaurants-list li h1 {
   color: #f18200;
   font-family: Arial,sans-serif;
