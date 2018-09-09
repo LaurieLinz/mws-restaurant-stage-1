@@ -35,6 +35,20 @@
     <section id="restaurant-container" aria-labelledby="restaurant-name">
       <h2 id="restaurant-name"></h2>
       <img id="restaurant-img">
+      <div>
+        <span>Your Name</span>
+        <input type="text">
+      </div> 
+      <div>
+        <span>Your Rating</span>
+        <select id="reviewRating">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+      </div> 
       <div>What are your thoughts?</div>
       <textarea id="reviewComment" rows="5" cols="50"></textarea>
       <button id="btnReview" onclick="saveReview()">Save Review</button>

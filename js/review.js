@@ -7,7 +7,7 @@ const saveReview = () => {
           console.log("Error saving review")
         }
         // Update the button onclick event
-        const btn = document.getElementById("btnSaveReview");
+        const btn = document.getElementById("btnReview");
         btn.onclick = event => saveReview();
     
         window.location.href = "/restaurant.html?id=" + self.restaurant.id;

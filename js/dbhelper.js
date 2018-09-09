@@ -11,6 +11,10 @@ class DBHelper {
     const port = 1337 // Change this to your server port
     return `http://localhost:${port}/restaurants`;
   }
+  static get DATABASE_REVIEWS_URL() {
+    const port = 1337 // Change this to your server port
+    return `http://localhost:${port}/reviews`;
+  }
 
   /**
    * Fetch all restaurants.
@@ -180,6 +184,8 @@ class DBHelper {
     // Create the POST body
     const body = {
       restaurant_id: id,
+      name: name,
+      rating: rating,
       comments: comment,
       createdAt: Date.now()
     }
@@ -230,6 +236,40 @@ class DBHelper {
 
     callback(null, {id, value: newState});
   }
+
+  static saveNewReview(id, bodyObj, callback) {
+    const url = `${DBHelper.DATABASE_REVIEWS_URL}`;
+    const method = "POST";
+    DBHelper.updateCachedRestaurantReview(id, bodyObj);
+    DBHelper.addPendingRequestToQueue(url, method, bodyObj);
+    callback(null, null);
+  }
+
+  
+
+  static addPendingRequestToQueue(url, method, body) {
+    const dbPromise = idb.open("fm-udacity-restaurant");
+    dbPromise.then(db => {
+      const tx = db.transaction("pending", "readwrite");
+      tx
+        .objectStore("pending")
+        .put({
+          data: {
+            url,
+            method,
+            body
+          }
+        })
+    })
+      .catch(error => {})
+      .then(DBHelper.nextPending());
+  }
+
+  static nextPending() {
+    DBHelper.attemptCommitPending(DBHelper.nextPending);
+  }
+
+
   static handleFavoriteClick(id, newState) {
     // Block any more clicks on this until the callback
     const fav = document.getElementById("favorite-icon-" + id);
@@ -243,10 +283,45 @@ class DBHelper {
       // Update the button background for the specified favorite
       const favorite = document.getElementById("favorite-icon-" + resultObj.id);
       favorite.style.background = resultObj.value
-        ? `url("/icons/002-like.svg") no-repeat`
-        : `url("icons/001-like-1.svg") no-repeat`;
+        ? `url("/icons/king.svg") no-repeat`
+        : `url("/icons/crowncolored.svg") no-repeat`;
     });
   }
 
-}
+  static updateCachedRestaurantData(id, updateObj) {
+    const dbPromise = idb.open("fm-udacity-restaurant");
+    // Update in the data for all restaurants first
+    dbPromise.then(db => {
+      console.log("Getting db transaction");
+      const tx = db.transaction("restaurants", "readwrite");
+      const value = tx
+        .objectStore("restaurants")
+        .get("-1")
+        .then(value => {
+          if (!value) {
+            console.log("No cached data found");
+            return;
+          }
+          const data = value.data;
+          const restaurantArr = data.filter(r => r.id === id);
+          const restaurantObj = restaurantArr[0];
+          // Update restaurantObj with updateObj details
+          if (!restaurantObj)
+            return;
+          const keys = Object.keys(updateObj);
+          keys.forEach(k => {
+            restaurantObj[k] = updateObj[k];
+          })
 
+          // Put the data back in IDB storage
+          dbPromise.then(db => {
+            const tx = db.transaction("restaurants", "readwrite");
+            tx
+              .objectStore("restaurants")
+              .put({id: "-1", data: data});
+            return tx.complete;
+          })
+        })
+    })
+  }
+}
