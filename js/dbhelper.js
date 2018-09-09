@@ -224,6 +224,7 @@ class DBHelper {
   } */
 
   // favorites
+  // I did use some of Doug Brown's methods in an attemp to get stared on this. His walkthrough was really helpful
 
   static updateFavorite(id, newState, callback) {
     // Push the request into the waiting queue in IDB
