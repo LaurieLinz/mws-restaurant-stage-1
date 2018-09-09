@@ -157,6 +157,27 @@ class DBHelper {
     return (`/images/${restaurant.id}-800_small_1x.jpg`);
   }
 
+  static saveReview(id, name, rating, comment, callback) {
+    // Block any more clicks on the submit button until the callback
+    const btn = document.getElementById("btnReview");
+    btn.onclick = null;
+
+    // Create the POST body
+    const body = {
+      restaurant_id: id,
+      comments: comment,
+      createdAt: Date.now()
+    }
+
+    DBHelper.saveNewReview(id, body, (error, result) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      callback(null, result);
+    })
+  }
+
   /**
    * Map marker for a restaurant.
    */
