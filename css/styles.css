@@ -267,7 +267,7 @@ nav h1 a {
 }
 #reviews-list li {
   background-color: #fff;
-    border: 2px solid #f3f3f3;
+  border: 2px solid #f3f3f3;
   display: block;
   list-style-type: none;
   margin: 0 0 30px;
@@ -278,6 +278,9 @@ nav h1 a {
 }
 #reviews-list li p {
   margin: 0 0 10px;
+}
+#btnReview {
+  background-color: #f58500;
 }
 #restaurant-hours td {
   color: #666;
