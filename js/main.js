@@ -177,19 +177,12 @@ createRestaurantHTML = (restaurant) => {
   favoriteDiv.className = "favorite-icon";
   const favorite = document.createElement("button");
   // Icons made by Freepic and Pixel Perfect from www.flaticon.com
-  // favorite.style.background = `url('/icons/king.svg') no-repeat`;
   favorite.style.background = isFavorite ? `url('/icons/crown.svg') no-repeat` : `url('/icons/king.svg') no-repeat`;
-
-  // favorite.style.background = isFavorite === "false" `url('/icons/king.svg') no-repeat`;
-  // favorite.style.background = isFavorite ? `url('/icons/king.svg') no-repeat` : `url('/icons/crowncolored.svg') no-repeat`;
-  // I think the below line is for screen readers but I am not sure how to get it to not show
-  // favorite.innerHTML = isFavorite ? restaurant.name + " is a favorite" : restaurant.name + " is not a favorite";
   favorite.id = "favorite-icon-" + restaurant.id;
   favorite.onclick = event => {
     event.preventDefault();
     handleFavoriteClick(restaurant.id, !isFavorite);
   }
-
   console.log(favorite.id, isFavorite)
   favoriteDiv.append(favorite)
   div.append(favoriteDiv);
