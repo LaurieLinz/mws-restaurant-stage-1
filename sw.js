@@ -8,9 +8,9 @@ var CACHE_FILES = [
     'css/styles.css',
     '/restaurant.html',
     'images/1-1600_large_2x.jpg',
-    'images/1-800_small_x.jpg',
+    'images/1-800_small_1x.jpg',
     'images/2-1600_large_2x.jpg',
-    'images/2--800_small_1x.jpg',,
+    'images/2-800_small_1x.jpg',
     'images/3-1600_large_2x.jpg',
     'images/3-800_small_1x.jpg',
     'images/4-1600_large_2x.jpg',
@@ -26,7 +26,7 @@ var CACHE_FILES = [
     'images/9-1600_large_2x.jpg',
     'images/9-800_small_1x.jpg',
     'images/10-1600_large_2x.jpg',
-    'images/10-800_small_1x.jpg'
+    'images/10-800_small_1x.jpg' 
  ]
 
 self.addEventListener('install', function(event) {
