@@ -11,10 +11,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
  * Initialize leaflet map
  */
 initMap = () => { 
-  fetchRestaurantFromURL((error, restaurant) => {
+  /*fetchRestaurantFromURL((error, restaurant) => {
     if (error) { // Got an error!
       console.error(error);
-    } else {     
+    } else {   
       self.newMap = L.map('map', {
         center: [restaurant.latlng.lat, restaurant.latlng.lng],
         zoom: 16,
@@ -31,6 +31,24 @@ initMap = () => {
       fillBreadcrumb();
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
     }
+  });/** */
+
+  fetchRestaurantFromURLPromise().then(restaurant => {
+    self.newMap = L.map('map', {
+      center: [restaurant.latlng.lat, restaurant.latlng.lng],
+      zoom: 16,
+      scrollWheelZoom: false
+    });
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
+      mapboxToken: token,
+      maxZoom: 18,
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      id: 'mapbox.streets'    
+    }).addTo(newMap);
+    fillBreadcrumb();
+    DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
   });
 }  
  
@@ -75,6 +93,18 @@ fetchRestaurantFromURL = (callback) => {
   }
 }
 
+const fetchRestaurantFromURLPromise = () => {
+  const id = getParameterByName('id');
+  if (!id) { // no id found in URL
+    error = 'No restaurant id in URL'
+    return Promise.reject('No restaurant id in URL');
+  }
+  return DBHelper.fetchRestaurantByIdPromise(id).then(restaurant => {
+    self.restaurant = restaurant;
+    fillRestaurantHTML();
+    return restaurant;
+  });
+};
 /**
  * Create restaurant HTML and add it to the webpage
  */

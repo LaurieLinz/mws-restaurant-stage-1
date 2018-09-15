@@ -49,6 +49,13 @@ class DBHelper {
       } else {
         const restaurant = restaurants.find(r => r.id == id);
         if (restaurant) { // Got the restaurant
+          //TODO: save restaurant into iDB
+          return dbPromise.then(db => {
+            const tx = db.transaction('restaurant', 'readwrite');
+            const restaurantStore = tx.objectStore('restaurants');
+            restaurantStore.put(review);
+            return tx.complete; 
+          })
           callback(null, restaurant);
         } else { // Restaurant does not exist in the database
           callback('Restaurant does not exist', null);
@@ -56,20 +63,50 @@ class DBHelper {
       }
     });
   }
+  static fetchRestaurantByIdPromise(id) {
+    return fetch(`${DBHelper.DATABASE_URL}/${id}`).then(response => {
+      // if successful, check if status is not 404 or something
+      if (!response.ok) return Promise.reject('failed with code: ' + response.status);
+      // if so, return response as json object.
+      return response.json();
+    }).then(restaurant => {
+      // TODO: save restaurant into iDB
+      const dbPromise = idb.open('restaurantReviews-db')
+      return dbPromise.then(db => {
+        const tx = db.transaction('restaurants', 'readwrite');
+        const restaurantStore = tx.objectStore('restaurants');
+        restaurantStore.put(restaurant);
+        return tx.complete; 
+      })
+      // and after saving it, return it back
+      return restaurant;
+    }).catch(err => {
+      console.error(err);
+      console.log("Offline, so trying iDB");
+      //TODO: try to get restaurant from iDB if available. and make sure id is a Number
+      // number = "2"
+      // number = Number(number);
+      fetch(`${this.DATABASE_REVIEWS_URL}/${id}`).then(response => {
+        if (!response.ok) return Promise.reject(`fetch did not work, returned with code ${response.status}`);
+        return response.json();
+      }).then(restaurant => {
+        // which here? I want to pull IDB
 
-  static fetchRestaurantReviewsById(id, callback) {
-    // Fetch all reviews for the specific restaurant
-    const fetchURL = DBHelper.DATABASE_REVIEWS_URL + "/?restaurant_id=" + id;
-    fetch(fetchURL, {method: "GET"}).then(response => {
-      if (!response.clone().ok && !response.clone().redirected) {
-        throw "No reviews available";
-      }
-      response
-        .json()
-        .then(result => {
-          callback(null, result);
-        })
-    }).catch(error => callback(error, null));
+      })
+
+
+    });
+  }
+
+  /**
+   * Returns a Promise that resolves to an array of reviews by restaurant id, or an error
+   * if the status wasn't ok ()
+  */
+  static fetchRestaurantReviewsById(id) {
+    return fetch(`${DBHelper.DATABASE_REVIEWS_URL}/?restaurant_id=${id}`).then(response => {
+      if (!response.ok) return Promise.reject(`Yo it is broke, returned with code ${response.status}`);
+      return response.json();
+    });
   }
 
   /**
