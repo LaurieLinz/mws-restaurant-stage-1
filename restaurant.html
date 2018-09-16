@@ -45,6 +45,29 @@
       <table id="restaurant-hours" aria-labelledby="restaurant-hours"></table>
     </section>
     <!-- end restaurant -->
+    <!--review form-->
+    <section>
+      <form id="form">
+        <div>
+          <label for="name">Your Name</label>
+          <input id="name" type="text">
+        </div> 
+        <div>
+          <label for="reviewRating">Your Rating</label>
+          <select id="reviewRating">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div> 
+        <label for="reviewComment">What are your thoughts?</label>
+        <textarea id="reviewComment" rows="5" cols="50"></textarea>
+        <button id="btnReview" aria-label="saveReview">Save Review</button>
+      </form>
+    </section>
+      <!-- end review form-->
     <!-- Beginning reviews -->
     <section id="reviews-container" aria-labelledby="reviews-list">
       <ul id="reviews-list"></ul>
