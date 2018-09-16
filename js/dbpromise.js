@@ -79,11 +79,11 @@ var dbPromise = idb.open('restaurantReviews-db', 2, function(upgradeDb) {
 
 // // list all cat people
 // dbPromise.then(function(db) {
-//   var tx = db.transaction('people');
+//   var tx = db.transaction('people'); 
 //   var peopleStore = tx.objectStore('people');
-//   var animalIndex = peopleStore.index('animal');
+//   var animalIndex = peopleStore.index('animal'); // <- this is how you open an index
 
-//   return animalIndex.getAll('cat');
+//   return animalIndex.getAll('cat'); // <- this is how you get all records from a given index
 // }).then(function(people) {
 //   console.log('Cat people:', people);
 // });
