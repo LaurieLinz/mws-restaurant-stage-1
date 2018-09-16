@@ -128,7 +128,10 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  DBHelper.fetchRestaurantReviewsById(restaurant.id, fillReviewsHTML)
+  DBHelper.fetchRestaurantReviewsById(restaurant.id)
+  .then(reviews => {
+    fillReviewsHTML(reviews);
+  });
 }
 
 /**
@@ -154,14 +157,8 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (error, reviews) => {
+fillReviewsHTML = (reviews) => {
     self.restaurant.reviews = reviews;
-
-    if (error) {
-      console.log("Error getting reviews yo: ", error)
-    }
-  
-  
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h2');
   title.innerHTML = 'Reviews';

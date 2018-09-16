@@ -1,25 +1,17 @@
-var dbPromise = idb.open('restaurantReviews-db', 1, function(upgradeDb) {
+var dbPromise = idb.open('restaurantReviews-db', 2, function(upgradeDb) {
   switch(upgradeDb.oldVersion) {
     case 0:
-      const restaurantStore = upgradeDb.createObjectStore('restaurants', {keyPath: 'id'});
-      // const restaurant = {id: 1, name: "pizza hub", createdAt: new Date().toISOString()};
-      // put is for creating or updating a restaurant, or whatever data your storing.
-      restaurantStore.put(restaurant);
+      // create
+      upgradeDb.createObjectStore('restaurants', {keyPath: 'id'});
     case 1:
-        let reviewStore = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
-        reviewStore.createIndex('restaurant_id', 'restaurant_id');
-        const review = {
-            "id": 1,
-            "restaurant_id": 1,
-            "name": "Steve",
-            "createdAt": 1504095567183,
-            "updatedAt": 1504095567183,
-            "rating": 4,
-            "comments": "Mission Chinese Food has grown up from its scrappy Orchard Street days into a big, two story restaurant equipped with a pizza oven, a prime rib cart, and a much broader menu. Yes, it still has all the hits â€” the kung pao pastrami, the thrice cooked bacon â€”but chef/proprietor Danny Bowien and executive chef Angela Dimayuga have also added a raw bar, two generous family-style set menus, and showstoppers like duck baked in clay. And you can still get a lot of food without breaking the bank."
-          }
-          reviewStore.put(review);
+      // upgradeDb.createObjectStore('reviews', {keyPath: 'id'}).createIndex('restaurant_id', 'restaurant_id');
+      let reviewStore = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
+      reviewStore.createIndex('restaurant_id', 'restaurant_id');
   }
 });
+
+
+// TODO: you can delete this after you're done using it as a reference
 
 // read "hello" in "keyval"
 // dbPromise.then(function(db) {
@@ -167,18 +159,18 @@ fetch(`${DBHelper.DATABASE_REVIEWS_URL}/${id}`).then(response => {
 //   });
 // }
 
-  DBHelper.fetchRestaurantReviewsById(5).then(reviews => {
-    // THIS IS WHAT TO USE TO STORE MULTIPLE OBJECTS FOUND IN AN ARRAY
-  reviews.forEach(review => {
-    dbPromise.then(db => {
-      const tx = db.transaction('reviews', 'readwrite');
-      const reviewStore = tx.objectStore('reviews');
+//   DBHelper.fetchRestaurantReviewsById(5).then(reviews => {
+//     // THIS IS WHAT TO USE TO STORE MULTIPLE OBJECTS FOUND IN AN ARRAY
+//   reviews.forEach(review => {
+//     dbPromise.then(db => {
+//       const tx = db.transaction('reviews', 'readwrite');
+//       const reviewStore = tx.objectStore('reviews');
       
-      reviewStore.put(review);
-      return tx.complete;
-    });
-  });
-}).catch(console.error) ;
+//       reviewStore.put(review);
+//       return tx.complete;
+//     });
+//   });
+// }).catch(console.error) ;
 
 
 // pseudocode

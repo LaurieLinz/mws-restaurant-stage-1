@@ -71,8 +71,7 @@ class DBHelper {
       return response.json();
     }).then(restaurant => {
       // TODO: save restaurant into iDB
-      const dbPromise = idb.open('restaurantReviews-db')
-      return dbPromise.then(db => {
+      dbPromise.then(db => {
         const tx = db.transaction('restaurants', 'readwrite');
         const restaurantStore = tx.objectStore('restaurants');
         restaurantStore.put(restaurant);
@@ -86,15 +85,13 @@ class DBHelper {
       //TODO: try to get restaurant from iDB if available. and make sure id is a Number
       // number = "2"
       // number = Number(number);
-      fetch(`${this.DATABASE_REVIEWS_URL}/${id}`).then(response => {
-        if (!response.ok) return Promise.reject(`fetch did not work, returned with code ${response.status}`);
-        return response.json();
-      }).then(restaurant => {
-        // which here? I want to pull IDB
-
+      return dbPromise.then(db => {
+        id = Number(id);
+        const tx = db.transaction('restaurants');
+        const restaurantStore = tx.objectStore('restaurants');
+        return restaurantStore.get(id);
+        // return any record with id "3" <- a string id
       })
-
-
     });
   }
 

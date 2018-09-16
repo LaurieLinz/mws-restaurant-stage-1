@@ -183,7 +183,7 @@ createRestaurantHTML = (restaurant) => {
     event.preventDefault();
     handleFavoriteClick(restaurant.id, !isFavorite);
   }
-  console.log(favorite.id, isFavorite)
+  // console.log(favorite.id, isFavorite)
   favoriteDiv.append(favorite)
   div.append(favoriteDiv);
 
