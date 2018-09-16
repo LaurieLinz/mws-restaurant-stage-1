@@ -103,14 +103,14 @@ class DBHelper {
     return fetch(`${DBHelper.DATABASE_REVIEWS_URL}/?restaurant_id=${id}`).then(response => {
       if (!response.ok) return Promise.reject(`Yo it is broke, returned with code ${response.status}`);
       return response.json();
-    }).then(reviews => {
+    // }).then(reviews => {
       //TODO: save reviews fetched from network into indexedDB see: dbpromise.js lines 164-174 as example
       // reviews is an array
       
 
       // return what here? Remember that fetchRestaurantReviewsById has to return something. see docs line 99-100
       // return 
-    }).catch(error => {
+    // }).catch(error => {
       //TODO: handle offline mode
       // serve reviews from indexedDB
       // HINT: you need to fetch all reviews by restaurant_id, so use the restaurant_id index you created in dbpromise.js line 9
