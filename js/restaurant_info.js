@@ -11,10 +11,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
  * Initialize leaflet map
  */
 initMap = () => { 
-  fetchRestaurantFromURL((error, restaurant) => {
+  /*fetchRestaurantFromURL((error, restaurant) => {
     if (error) { // Got an error!
       console.error(error);
-    } else {     
+    } else {   
       self.newMap = L.map('map', {
         center: [restaurant.latlng.lat, restaurant.latlng.lng],
         zoom: 16,
@@ -31,6 +31,24 @@ initMap = () => {
       fillBreadcrumb();
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
     }
+  });/** */
+
+  fetchRestaurantFromURLPromise().then(restaurant => {
+    self.newMap = L.map('map', {
+      center: [restaurant.latlng.lat, restaurant.latlng.lng],
+      zoom: 16,
+      scrollWheelZoom: false
+    });
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
+      mapboxToken: token,
+      maxZoom: 18,
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      id: 'mapbox.streets'    
+    }).addTo(newMap);
+    fillBreadcrumb();
+    DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
   });
 }  
  
@@ -75,6 +93,18 @@ fetchRestaurantFromURL = (callback) => {
   }
 }
 
+const fetchRestaurantFromURLPromise = () => {
+  const id = getParameterByName('id');
+  if (!id) { // no id found in URL
+    error = 'No restaurant id in URL'
+    return Promise.reject('No restaurant id in URL');
+  }
+  return DBHelper.fetchRestaurantByIdPromise(id).then(restaurant => {
+    self.restaurant = restaurant;
+    fillRestaurantHTML();
+    return restaurant;
+  });
+};
 /**
  * Create restaurant HTML and add it to the webpage
  */
@@ -98,7 +128,10 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  DBHelper.fetchRestaurantReviewsById(restaurant.id, fillReviewsHTML)
+  DBHelper.fetchRestaurantReviewsById(restaurant.id)
+  .then(reviews => {
+    fillReviewsHTML(reviews);
+  });
 }
 
 /**
@@ -124,14 +157,8 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (error, reviews) => {
+fillReviewsHTML = (reviews) => {
     self.restaurant.reviews = reviews;
-
-    if (error) {
-      console.log("Error getting reviews yo: ", error)
-    }
-  
-  
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h2');
   title.innerHTML = 'Reviews';
@@ -165,7 +192,8 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  let dateCreated = new Date(review.createdAt).toDateString();
+  date.innerHTML = dateCreated;
   li.appendChild(date);
 
   const rating = document.createElement('p');
@@ -212,3 +240,49 @@ const handleFavoriteClick = (id, newState) => {
   favorite.onclick = event => handleFavoriteClick(restaurant.id, !self.restaurant["is_favorite"]);
   DBHelper.handleFavoriteClick(id, newState);
 };
+
+
+//TODO: handle new review form
+
+// get button, and prevent default behavior
+const btnReview = document.getElementById("btnReview");
+btnReview.onclick = (e) => {
+  e.preventDefault();
+  // get name
+  const name = document.getElementById("name").value;
+
+  // get review comment
+  const comments = document.getElementById("reviewComment").value;
+
+  // get rating
+  const select = document.getElementById('reviewRating');
+  const rating = select.options[select.selectedIndex].value;
+
+  let id = getParameterByName('id');
+  const reviewData = {
+    restaurant_id: id,
+    name: name,
+    rating: rating,
+    comments: comments
+  };
+  console.log("review: ", reviewData);
+  
+  const POST = {
+    method: 'POST',
+    body: JSON.stringify(reviewData)
+  };
+
+  fetch(DBHelper.DATABASE_REVIEWS_URL, POST)
+
+
+};
+
+// 
+//   "id": 3,
+//   "restaurant_id": 1,
+//   "name": "Jason",
+//   "createdAt": 1504095567183,
+//   "updatedAt": 1504095567183,
+//   "rating": "3",
+//   "comments": "I was VERY excited to come here after seeing and hearing so many good things about this place. Having read much, I knew going into it that it was not going to be authentic Chinese. The place was edgy, had a punk rock throwback attitude, and generally delivered the desired atmosphere. Things went downhill from there though. The food was okay at best and the best qualities were easily overshadowed by what I believe to be poor decisions by the kitchen staff."
+// }
