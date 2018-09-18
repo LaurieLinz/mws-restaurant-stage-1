@@ -270,6 +270,16 @@ nav h1 a {
 #reviews-container {
   padding: 30px 40px 80px;
 }
+
+#form {
+  margin-left: 3em;
+}
+
+#btnReview, #reviewComment, #reviewRating, reviewName, name {
+  margin: 3px
+}
+
+
 #reviews-container h2 {
   color: #f58500;
   font-size: 24pt;
@@ -296,7 +306,7 @@ nav h1 a {
   margin: 0 0 10px;
 }
 #btnReview {
-  background-color: #f58500;
+  background-color: orange;
 }
 #restaurant-hours td {
   color: #666;
