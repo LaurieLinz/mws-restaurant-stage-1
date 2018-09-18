@@ -106,16 +106,25 @@ class DBHelper {
     // }).then(reviews => {
       //TODO: save reviews fetched from network into indexedDB see: dbpromise.js lines 164-174 as example
       // reviews is an array
-      
-
+      reviews.forEach(review => {
+        dbPromise.then(db => {
+          const tx = db.transaction('reviews', 'readwrite');
+          const reviewStore = tx.objectStore('reviews')
+          reviewStore.put(review);
+          return tx.complete
+        });
+      });
       // return what here? Remember that fetchRestaurantReviewsById has to return something. see docs line 99-100
-      // return 
-    // }).catch(error => {
       //TODO: handle offline mode
       // serve reviews from indexedDB
       // HINT: you need to fetch all reviews by restaurant_id, so use the restaurant_id index you created in dbpromise.js line 9
       // see dbpromise.js 82-86 as an example of opening an index, and getting all values from it back.
-
+      return dbPromise.then(db => {
+        const tx = db.transaction('reviews');
+        var reviewStore = tx.objectStore('reviews');
+        var reviewIndex = reviewStore.index('restaurant_id');
+        return reviewIndex.getAll(Number(id));
+      })
       // What do you need to return here if there was an error. see docs line 99-100
       // return
     });
