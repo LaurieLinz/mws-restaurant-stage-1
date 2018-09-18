@@ -115,20 +115,19 @@ class DBHelper {
         });
       });
       // return what here? Remember that fetchRestaurantReviewsById has to return something. see docs line 99-100
-      return review 
+      return reviews 
     }).catch(error => {
+      console.log("We could not fetch from the network", error)
       //TODO: handle offline mode
       // serve reviews from indexedDB
       // HINT: you need to fetch all reviews by restaurant_id, so use the restaurant_id index you created in dbpromise.js line 9
       // see dbpromise.js 82-86 as an example of opening an index, and getting all values from it back.
-      dbPromise.then(db => {
+      return dbPromise.then(db => {
         const tx = db.transaction('reviews');
-        var reviewStore = tx.objectStore('review');
-        var reviewIndex = reviewStore.index('review')
-        return reviewIndex.getAll('review')
+        var reviewStore = tx.objectStore('reviews');
+        var reviewIndex = reviewStore.index('restaurant_id');
+        return reviewIndex.getAll(Number(id));
       })
-      return error
-      console.log("There was an error with the reviewStore", error)
       // What do you need to return here if there was an error. see docs line 99-100
       // return
     });
